@@ -1,0 +1,4 @@
+[submodule "third_party/direct_lidar_inertial_odometry"]
+	path = third_party/direct_lidar_inertial_odometry
+	url = https://github.com/rtarun1/direct_lidar_inertial_odometry.git
+	branch = feature/ros2
