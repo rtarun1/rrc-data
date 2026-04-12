@@ -30,7 +30,7 @@ jobs:
           echo "image_version=${{ github.ref_name }}" >> $GITHUB_OUTPUT
 
 
-  # Stage 1: Wheelchair images (AMD64/x86)
+  # Stage 1: GroundTruth3D images (AMD64/x86)
   GroundTruth3D_AMD64:
     needs: get-version
     name: GroundTruth3D Images (AMD64)
