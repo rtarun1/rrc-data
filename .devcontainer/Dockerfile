@@ -7,10 +7,10 @@ ARG USER_UID=1000
 ARG USER_GID=$USER_UID
 
 # Add the following labels
-LABEL org.opencontainers.image.description="Collecting Ground-Truth 3d"
-LABEL org.opencontainers.image.title="GroundTruth3d"
+LABEL org.opencontainers.image.description="Collecting Ground-Truth 3D pose and scene"
+LABEL org.opencontainers.image.title="GroundTruth3D"
 LABEL org.opencontainers.image.vendor="Tarun R"
-LABEL org.opencontainers.image.source="https://github.com/GlassDetection/wheelchair2_glass.git"
+LABEL org.opencontainers.image.source="https://github.com/rtarun1/GroundTruth3D"
 LABEL maintainer="tarun.ramak@gmail.com"
 LABEL org.opencontainers.image.licenses="MIT"
 
@@ -167,7 +167,7 @@ RUN VULKAN_API_VERSION=$(dpkg -s libvulkan1 | grep -oP 'Version: [0-9|\.]+' | gr
 
 # Build and install Realsense-SDK
 WORKDIR /home/$USERNAME
-RUN git clone --depth=1 --progress --verbose https://github.com/IntelRealSense/librealsense.git --branch v2.56.2
+RUN git clone --depth=1 --progress https://github.com/IntelRealSense/librealsense.git --branch v2.56.2
 WORKDIR /home/$USERNAME/librealsense
 RUN sudo mkdir -p /etc/udev/rules.d && \
     ./scripts/setup_udev_rules.sh \
@@ -178,7 +178,7 @@ RUN mkdir build && cd build \
 
 # Build and install Livox-SDK2
 WORKDIR /home/$USERNAME
-RUN git clone --depth=1 --progress --verbose https://github.com/Smart-Wheelchair-RRC/Livox-SDK2.git 
+RUN git clone --depth=1 --progress https://github.com/Smart-Wheelchair-RRC/Livox-SDK2.git 
 RUN cd Livox-SDK2 \
     && mkdir build \
     && cd build \
