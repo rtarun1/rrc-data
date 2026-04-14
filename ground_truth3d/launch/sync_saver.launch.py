@@ -40,7 +40,6 @@ def generate_launch_description():
 
     return LaunchDescription([
         rosbag_play_launch,
-        invert_lidar_node,
         dlio_launch,
         synced_saver_node
     ])
