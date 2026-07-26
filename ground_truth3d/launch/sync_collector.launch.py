@@ -117,6 +117,14 @@ def generate_launch_description():
         condition=IfCondition(record),
     )
 
+    rviz_node = Node(
+        package='rviz2',
+        executable='rviz2',
+        name='rviz2',
+        output='log',
+        arguments=['-d', get_package_share_directory('ground_truth3d') + '/rviz/data_collection.rviz'],
+    )
+
     rosbag_with_delay = TimerAction(
         period=0.5,
         actions=[rosbag_recorder_launch],
@@ -127,6 +135,7 @@ def generate_launch_description():
         insta_node,
         camera1_launch,
         livox_launch,
+        rviz_node,
         rosbag_with_delay,
     ]
 

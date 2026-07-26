@@ -16,6 +16,8 @@ find_package(OpenCV REQUIRED)
 find_package(pcl_conversions REQUIRED)
 find_package(PCL REQUIRED COMPONENTS common io)
 find_package(Eigen3 REQUIRED)
+find_package(tf2 REQUIRED)
+find_package(tf2_ros REQUIRED)
 
 add_executable(invert_lidar src/invert_lidar.cpp)
 ament_target_dependencies(invert_lidar rclcpp sensor_msgs)
@@ -43,6 +45,8 @@ ament_target_dependencies(synced_saver
   cv_bridge
   OpenCV
   pcl_conversions
+  tf2
+  tf2_ros
 )
 
 install(TARGETS
