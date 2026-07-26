@@ -27,7 +27,7 @@ Panels:
     Experimental: false
     Name: Time
     SyncMode: 0
-    SyncSource: ""
+    SyncSource: PointCloud2
 Visualization Manager:
   Class: ""
   Displays:
@@ -110,7 +110,7 @@ Visualization Manager:
       Enabled: true
       Invert Rainbow: false
       Max Color: 255; 255; 255
-      Max Intensity: 155
+      Max Intensity: 182
       Min Color: 0; 0; 0
       Min Intensity: 0
       Name: PointCloud2
@@ -180,7 +180,7 @@ Visualization Manager:
           Scale: 1
           Value: true
         Value: true
-      Enabled: true
+      Enabled: false
       Keep: 100
       Name: Odometry
       Position Tolerance: 0.10000000149011612
@@ -201,12 +201,16 @@ Visualization Manager:
         History Policy: Keep Last
         Reliability Policy: Reliable
         Value: /odom
-      Value: true
+      Value: false
     - Class: rviz_default_plugins/TF
       Enabled: true
       Frame Timeout: 15
       Frames:
         All Enabled: false
+        base_footprint:
+          Value: true
+        base_link:
+          Value: true
         camera1_color_frame:
           Value: false
         camera1_color_optical_frame:
@@ -217,13 +221,96 @@ Visualization Manager:
           Value: false
         camera1_link:
           Value: true
+        camera_base_rod:
+          Value: true
+        camera_bottom_screw_frame:
+          Value: true
+        camera_color_frame:
+          Value: true
+        camera_color_optical_frame:
+          Value: true
+        camera_depth_frame:
+          Value: true
+        camera_depth_optical_frame:
+          Value: true
+        camera_left_ir_frame:
+          Value: true
+        camera_left_ir_optical_frame:
+          Value: true
+        camera_link:
+          Value: true
+        camera_mount_link:
+          Value: true
+        camera_right_ir_frame:
+          Value: true
+        camera_right_ir_optical_frame:
+          Value: true
+        caster1:
+          Value: true
+        caster2:
+          Value: true
+        inertial_sensor:
+          Value: true
+        left_wheel:
+          Value: true
+        livox_frame:
+          Value: true
+        livox_mount_link:
+          Value: true
+        map:
+          Value: true
+        odom:
+          Value: true
+        range_sensor:
+          Value: true
+        right_wheel:
+          Value: true
+        rod1:
+          Value: true
+        rod2:
+          Value: true
       Marker Scale: 1
       Name: TF
       Show Arrows: true
       Show Axes: true
       Show Names: true
       Tree:
-        {}
+        map:
+          odom:
+            base_footprint:
+              base_link:
+                camera_base_rod:
+                  {}
+                caster1:
+                  {}
+                caster2:
+                  {}
+                left_wheel:
+                  {}
+                right_wheel:
+                  {}
+                rod1:
+                  {}
+                rod2:
+                  {}
+              livox_frame:
+                camera_mount_link:
+                  camera_bottom_screw_frame:
+                    camera_link:
+                      camera_depth_frame:
+                        camera_color_frame:
+                          camera_color_optical_frame:
+                            {}
+                        camera_depth_optical_frame:
+                          {}
+                        camera_left_ir_frame:
+                          camera_left_ir_optical_frame:
+                            {}
+                        camera_right_ir_frame:
+                          camera_right_ir_optical_frame:
+                            {}
+              livox_mount_link:
+                {}
       Update Interval: 0
       Value: true
     - Class: rviz_default_plugins/Image
@@ -257,7 +344,7 @@ Visualization Manager:
   Enabled: true
   Global Options:
     Background Color: 48; 48; 48
-    Fixed Frame: base_link
+    Fixed Frame: map
     Frame Rate: 30
   Name: root
   Tools:
@@ -299,26 +386,26 @@ Visualization Manager:
   Value: true
   Views:
     Current:
-      Class: rviz_default_plugins/Orbit
-      Distance: 8.776195526123047
+      Class: rviz_default_plugins/ThirdPersonFollower
+      Distance: 27.747217178344727
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.05999999865889549
         Stereo Focal Distance: 1
         Swap Stereo Eyes: false
         Value: false
       Focal Point:
-        X: 2.9197144508361816
-        Y: 4.780243873596191
-        Z: 1.5100927352905273
+        X: 13.659786224365234
+        Y: -8.531468391418457
+        Z: 0
       Focal Shape Fixed Size: true
       Focal Shape Size: 0.05000000074505806
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.009999999776482582
-      Pitch: 0.36539822816848755
+      Pitch: 1.100398063659668
       Target Frame: <Fixed Frame>
-      Value: Orbit (rviz)
-      Yaw: 2.4653992652893066
+      Value: ThirdPersonFollower (rviz_default_plugins)
+      Yaw: 3.510401487350464
     Saved: ~
 Window Geometry:
   Camera:

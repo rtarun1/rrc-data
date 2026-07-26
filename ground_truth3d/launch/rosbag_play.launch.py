@@ -43,10 +43,10 @@ def launch_playback(context, *args, **kwargs):
         arguments=['-d', get_package_share_directory('ground_truth3d') + '/rviz/data_collection.rviz'],
     )
     rosbag_play = ExecuteProcess(
-        cmd=['ros2', 'bag', 'play', selected_bag_dir],
+        cmd=['ros2', 'bag', 'play', selected_bag_dir, '--clock'],
         output='screen'
     )
-    return [rosbag_play]
+    return [rosbag_play, rviz_node]
 
 def generate_launch_description():
     return LaunchDescription([
