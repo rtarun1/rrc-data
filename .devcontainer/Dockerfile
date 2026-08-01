@@ -1,4 +1,4 @@
-FROM nvidia/cuda:12.2.2-devel-ubuntu22.04
+FROM ubuntu:jammy
 
 # basic args
 ARG ROS_DISTRO=humble
@@ -7,10 +7,10 @@ ARG USER_UID=1000
 ARG USER_GID=$USER_UID
 
 # Add the following labels
-LABEL org.opencontainers.image.description="Collecting Ground-Truth 3D pose and scene"
-LABEL org.opencontainers.image.title="GroundTruth3D"
+LABEL org.opencontainers.image.description="Data collection"
+LABEL org.opencontainers.image.title="RRCData"
 LABEL org.opencontainers.image.vendor="Tarun R"
-LABEL org.opencontainers.image.source="https://github.com/rtarun1/GroundTruth3D"
+LABEL org.opencontainers.image.source="https://github.com/rtarun1/rrc-data"
 LABEL maintainer="tarun.ramak@gmail.com"
 LABEL org.opencontainers.image.licenses="MIT"
 
@@ -104,31 +104,20 @@ RUN echo 'source /usr/share/bash-completion/bash_completion' | sudo tee -a ~/.ba
     echo 'eval "$(register-python-argcomplete3 ros2)"' | sudo tee -a ~/.bashrc > /dev/null && \
     echo 'eval "$(register-python-argcomplete3 colcon)"' | sudo tee -a ~/.bashrc > /dev/null
 
-# Install deps
-RUN sudo apt-get update && sudo apt-get install -y --no-install-recommends \
-    gnupg \
-    software-properties-common \
-    libtiff5 \
-    libegl1 \
-    libxext6 \
-    libvulkan1 \
-    freeglut3-dev \
-    vulkan-tools \
-    libdc1394-25 \
-    mesa-utils \
+# Install Basic deps
+RUN sudo apt-get update \
+    && sudo apt-get -y install --no-install-recommends\
     libssl-dev \
     libusb-1.0-0-dev \
     libudev-dev \
     pkg-config \
     libgtk-3-dev \
+    wget \
     cmake \
     build-essential \
-    ssh \
-    udev \
     libglfw3-dev \
     libgl1-mesa-dev \
     libglu1-mesa-dev \
-    libaprutil1-dev \
     at \
     v4l-utils \
     xterm \
@@ -136,34 +125,25 @@ RUN sudo apt-get update && sudo apt-get install -y --no-install-recommends \
     vim \
     nano \
     tree \
-    python3.10-venv \
-    wget \
-    ffmpeg=7:* \
-    libsm6=2:* \
-    libxext6=2:* \
-    git=1:* \
-    ninja-build \
-    gcc-10 \
-    g++-10 \
     && sudo apt-get autoremove -y \
     && sudo apt-get clean -y \
     && sudo rm -rf /var/lib/apt/lists/*
 
-# Setup NVIDIA Container Toolkit for GPU access
-RUN VULKAN_API_VERSION=$(dpkg -s libvulkan1 | grep -oP 'Version: [0-9|\.]+' | grep -oP '[0-9]+(\.[0-9]+)(\.[0-9]+)') && \
-    sudo mkdir -pm755 /etc/vulkan/icd.d/ && \
-    echo "{\
-    \"file_format_version\" : \"1.0.0\",\
-    \"ICD\": {\
-        \"library_path\": \"libGLX_nvidia.so.0\",\
-        \"api_version\" : \"${VULKAN_API_VERSION}\"\
-    }}" | sudo tee /etc/vulkan/icd.d/nvidia_icd.json > /dev/null && \
-    sudo mkdir -pm755 /usr/share/glvnd/egl_vendor.d/ && \
-    echo "{\
-    \"file_format_version\" : \"1.0.0\",\
-    \"ICD\": {\
-        \"library_path\": \"libEGL_nvidia.so.0\"\
-    }}" | sudo tee /usr/share/glvnd/egl_vendor.d/10_nvidia.json > /dev/null
+# # Setup NVIDIA Container Toolkit for GPU access
+# RUN VULKAN_API_VERSION=$(dpkg -s libvulkan1 | grep -oP 'Version: [0-9|\.]+' | grep -oP '[0-9]+(\.[0-9]+)(\.[0-9]+)') && \
+#     sudo mkdir -pm755 /etc/vulkan/icd.d/ && \
+#     echo "{\
+#     \"file_format_version\" : \"1.0.0\",\
+#     \"ICD\": {\
+#         \"library_path\": \"libGLX_nvidia.so.0\",\
+#         \"api_version\" : \"${VULKAN_API_VERSION}\"\
+#     }}" | sudo tee /etc/vulkan/icd.d/nvidia_icd.json > /dev/null && \
+#     sudo mkdir -pm755 /usr/share/glvnd/egl_vendor.d/ && \
+#     echo "{\
+#     \"file_format_version\" : \"1.0.0\",\
+#     \"ICD\": {\
+#         \"library_path\": \"libEGL_nvidia.so.0\"\
+#     }}" | sudo tee /usr/share/glvnd/egl_vendor.d/10_nvidia.json > /dev/null
 
 # Build and install Realsense-SDK
 WORKDIR /home/$USERNAME
@@ -193,8 +173,8 @@ RUN cd small_gicp \
 
 RUN curl -s --compressed "https://koide3.github.io/ppa/ubuntu2204/KEY.gpg" | gpg --dearmor | sudo tee /etc/apt/trusted.gpg.d/koide3_ppa.gpg >/dev/null  \
     && echo "deb [signed-by=/etc/apt/trusted.gpg.d/koide3_ppa.gpg] https://koide3.github.io/ppa/ubuntu2204 ./" | sudo tee /etc/apt/sources.list.d/koide3_ppa.list \
-    && sudo apt update && sudo apt install -y libiridescence-dev libboost-all-dev libglfw3-dev libmetis-dev libgtsam-points-cuda12.2-dev \
-    && sudo apt install -y ros-humble-glim-ros-cuda12.2
+    && sudo apt update && sudo apt install -y libiridescence-dev libboost-all-dev libglfw3-dev libmetis-dev libgtsam-points-dev \
+    && sudo apt install -y ros-humble-glim-ros
 
 COPY rosPkgs.list /tmp/rosPkgs.list
 RUN sudo apt-get update \
