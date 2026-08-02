@@ -26,6 +26,7 @@ from launch_xml.launch_description_sources import XMLLaunchDescriptionSource
 
 
 def generate_launch_description():
+    dlio_share = get_package_share_directory('direct_lidar_inertial_odometry')
     launch_arguments = []
     launch_arguments.append(
         DeclareLaunchArgument(
@@ -43,13 +44,6 @@ def generate_launch_description():
     )
     launch_arguments.append(
         DeclareLaunchArgument(
-            'use_insta360',
-            default_value='False',
-            description='Fisheye insta360 output'
-        )
-    )
-    launch_arguments.append(
-        DeclareLaunchArgument(
             'record',
             default_value='True',
             description='Record in rosbag'
@@ -58,12 +52,11 @@ def generate_launch_description():
 
     use_sim_time = LaunchConfiguration("use_sim_time")
     use_camera1 = LaunchConfiguration("use_camera1")
-    use_insta360 = LaunchConfiguration("use_insta360")
     record = LaunchConfiguration("record")
 
 
     get_current_timestamp = datetime.datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
-    log_full_path = os.path.join('/home/container_user/ground_truth3d/src/records/', get_current_timestamp)
+    log_full_path = os.path.join('/home/container_user/rrc_data/src/records/', get_current_timestamp)
     rosbag_full_path = os.path.join(log_full_path, 'rosbag')
 
     package_path = get_package_share_directory('ground_truth3d')
@@ -89,19 +82,10 @@ def generate_launch_description():
         condition=IfCondition(use_camera1),
     )
 
-    insta_node = Node(
-        package='insta360_ros_stitcher',
-        executable='recorder',
-        name='insta_recorder',
-        output='log',
-        on_exit=Shutdown(),
-        condition=IfCondition(use_insta360),
-    )
-
     livox_launch = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
             PathJoinSubstitution(
-                [FindPackageShare("livox_ros_driver2"), "launch", "msg_MID360_launch.py"]
+                [FindPackageShare("livox_ros_driver2"), "launch", "husky_mid360_launch.py"]
             ),
         ),
     )
@@ -125,17 +109,24 @@ def generate_launch_description():
         arguments=['-d', get_package_share_directory('ground_truth3d') + '/rviz/data_collection.rviz'],
     )
 
+    dlio_launch = IncludeLaunchDescription(
+            PythonLaunchDescriptionSource(
+                os.path.join(dlio_share, 'launch', 'dlio.launch.py')
+            ),
+            launch_arguments={'rviz': 'true'}.items()
+        )
+
     rosbag_with_delay = TimerAction(
-        period=0.5,
+        period=5.0,
         actions=[rosbag_recorder_launch],
         condition=IfCondition(record),
     )
 
     nodes = [
-        insta_node,
         camera1_launch,
         livox_launch,
         rviz_node,
+        # dlio_launch,
         rosbag_with_delay,
     ]
 

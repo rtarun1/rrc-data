@@ -2,20 +2,7 @@ topics:
   - /camera1/camera1/color/camera_info
   - /camera1/camera1/color/image_raw
   - /camera1/camera1/aligned_depth_to_color/image_raw
-  - /camera1/camera1/depth/color/points
-  # - /camera2/camera2/color/camera_info
-  # - /camera2/camera2/color/image_raw
-  # - /camera3/camera3/color/camera_info
-  # - /camera3/camera3/color/image_raw
-  # - /camera4/camera4/color/camera_info
-  # - /camera4/camera4/color/image_raw
-  # - /camera5/camera5/color/camera_info
-  # - /camera5/camera5/color/image_raw
-  # - /dual_fisheye/image
-  # - /dual_fisheye/image/compressed
-  # - /equirectangular/image
-  # - /front_fisheye/image
-  # - /back_fisheye/image
+  # - /camera1/camera1/depth/color/points
   - /livox/lidar
-  # - /livox/lidar_filtered
   - /livox/imu
+  # - /dlio/odom_node/pose

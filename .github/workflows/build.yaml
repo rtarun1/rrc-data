@@ -1,4 +1,4 @@
-name: Build GroundTruth3D Containers
+name: Build RRCData Containers
 
 on:
   push:
@@ -30,17 +30,17 @@ jobs:
           echo "image_version=${{ github.ref_name }}" >> $GITHUB_OUTPUT
 
 
-  # Stage 1: GroundTruth3D images (AMD64/x86)
-  GroundTruth3D_AMD64:
+  # Stage 1: RRCData images (AMD64/x86)
+  RRCData_AMD64:
     needs: get-version
-    name: GroundTruth3D Images (AMD64)
+    name: RRCData Images (AMD64)
     permissions:
       packages: write
       contents: read
     strategy:
       matrix:
         config:
-          - { build_context: '.devcontainer', image_name: 'ground_truth3d_base', image_version: "${{ needs.get-version.outputs.image_version }}" }
+          - { build_context: '.devcontainer', image_name: 'rrc_data_base', image_version: "${{ needs.get-version.outputs.image_version }}" }
           # - { build_context: '.devcontainer/amd64_x86_without_GPU', image_name: 'wheelchair2_no_gpu', image_version: "${{ needs.get-version.outputs.image_version }}" }
     uses: ./.github/workflows/build-workflow.yaml
     with:
@@ -70,7 +70,7 @@ jobs:
   # Stage 2: Create release
   # if the tag is v*, create a pre-release
   create-release:
-    needs: [GroundTruth3D_AMD64]
+    needs: [RRCData_AMD64]
     if: startsWith(github.ref_name, 'v')
     runs-on: ubuntu-latest
     permissions:

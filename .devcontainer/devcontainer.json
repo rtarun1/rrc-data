@@ -1,16 +1,9 @@
 {
-    "name": "GroundTruth3D Development on AMD64/x86 with GPU",
-    "image": "ghcr.io/rtarun1/ground_truth3d_base:v0.1",
+    "name": "RRC Data collection Development on AMD64/x86 without GPU",
+    "image": "ghcr.io/rtarun1/ground_truth3d_base:v0.2",
     "privileged": true,
-    "workspaceMount": "source=${localWorkspaceFolder},target=/home/container_user/ground_truth3d/src,type=bind",
-    "workspaceFolder": "/home/container_user/ground_truth3d/src",
-
-    "mounts": [
-        "source=/tmp/.X11-unix,target=/tmp/.X11-unix,type=bind,consistency=cached",
-        "source=${localEnv:HOME}/.Xauthority,target=/root/.Xauthority,type=bind"
-    ],
-
-    
+    "workspaceMount": "source=${localWorkspaceFolder},target=/home/container_user/rrc_data/src,type=bind",
+    "workspaceFolder": "/home/container_user/rrc_data/src",
     "customizations": {
         "vscode": {
             "settings": {
@@ -21,7 +14,7 @@
                     "commands": [
                         {
                             "name": "Build WS",
-                            "cwd": "/home/container_user/ground_truth3d",
+                            "cwd": "/home/container_user/rrc_data",
                             "color": "aqua",
                             "singleInstance": true,
                             "command": "colcon build --symlink-install --parallel-workers 1 && source install/setup.bash"
@@ -49,22 +42,22 @@
         "DISPLAY": "${localEnv:DISPLAY}", // Needed for GUI try ":0" for windows
         "WAYLAND_DISPLAY": "${localEnv:WAYLAND_DISPLAY}",
         "XDG_RUNTIME_DIR": "${localEnv:XDG_RUNTIME_DIR}",
-        "PULSE_SERVER": "${localEnv:PULSE_SERVER}",
+        // "PULSE_SERVER": "${localEnv:PULSE_SERVER}",
         "QT_X11_NO_MITSHM": "1",
-        // "LIBGL_ALWAYS_SOFTWARE": "1", // Needed for software rendering of opengl ( Comment this off if you face any lag in Gazebo )
-        "NVIDIA_DRIVER_CAPABILITIES": "all",
-        "NVIDIA_VISIBLE_DEVICES": "all",
-        "ROS_DOMAIN_ID": "27",
-        "__NV_PRIME_RENDER_OFFLOAD": "1",
-        "__GLX_VENDOR_LIBRARY_NAME": "nvidia"
+        "LIBGL_ALWAYS_SOFTWARE": "1", // Needed for software rendering of opengl ( Comment this off if you face any lag in Gazebo )
+        // "NVIDIA_DRIVER_CAPABILITIES": "all",
+        // "NVIDIA_VISIBLE_DEVICES": "all",
+        "ROS_DOMAIN_ID": "27"
+        // "__NV_PRIME_RENDER_OFFLOAD": "1",
+        // "__GLX_VENDOR_LIBRARY_NAME": "nvidia"
     },
     "runArgs": [
         "--privileged",
-        "--gpus=all", // Comment this off if you don't have a GPU
+        // "--gpus=all", // Comment this off if you don't have a GPU
         "--cap-add=SYS_NICE",
         "--ulimit=rtprio=99",
         "--ulimit=rttime=-1",
-        "--ulimit=memlock=8428281856",
+        // "--ulimit=memlock=8428281856",
         "--cap-add=all",
         "--security-opt=seccomp:unconfined",
         "--security-opt=apparmor:unconfined",
@@ -73,8 +66,8 @@
         "--volume=/media:/media:rw",
         "--net=host",
         "--ipc=host",
-        "--env", "NVIDIA_DRIVER_CAPABILITIES=all"
+        // "--env", "NVIDIA_DRIVER_CAPABILITIES=all"
     ],
-    "postStartCommand": "sudo chown -R container_user:container_user /home/container_user/ground_truth3d /run",
-    "initializeCommand": "xhost +local:root"
+    "postStartCommand": "sudo chown -R container_user:container_user /home/container_user/rrc_data /run",
+    // "initializeCommand": "xhost +local:root"
 }
