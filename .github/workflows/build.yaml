@@ -41,7 +41,7 @@ jobs:
       matrix:
         config:
           - { build_context: '.devcontainer/amd64_x86_with_GPU', image_name: 'rrc_data_gpu', image_version: "${{ needs.get-version.outputs.image_version }}" }
-          - { build_context: '.devcontainer/amd64_x86_without_GPU', image_name: 'rrc_data_cpu', image_version: "${{ needs.get-version.outputs.image_version }}" }
+          # - { build_context: '.devcontainer/amd64_x86_without_GPU', image_name: 'rrc_data_cpu', image_version: "${{ needs.get-version.outputs.image_version }}" }
     uses: ./.github/workflows/build-workflow.yaml
     with:
       build_context: ${{ matrix.config.build_context }}
