@@ -1,4 +1,0 @@
-synced_saver:
-  ros__parameters:
-    base_output_dir: "src/data/2026-04-18_02-42-52"
-    save_pcd: false

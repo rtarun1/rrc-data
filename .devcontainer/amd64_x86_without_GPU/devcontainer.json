@@ -1,6 +1,6 @@
 {
     "name": "RRC Data collection Development on AMD64/x86 without GPU",
-    "image": "ghcr.io/rtarun1/ground_truth3d_base:v0.2",
+    "image": "ghcr.io/rtarun1/rrc_data_cpu:v0.5",
     "privileged": true,
     "workspaceMount": "source=${localWorkspaceFolder},target=/home/container_user/rrc_data/src,type=bind",
     "workspaceFolder": "/home/container_user/rrc_data/src",
@@ -47,7 +47,7 @@
         "LIBGL_ALWAYS_SOFTWARE": "1", // Needed for software rendering of opengl ( Comment this off if you face any lag in Gazebo )
         // "NVIDIA_DRIVER_CAPABILITIES": "all",
         // "NVIDIA_VISIBLE_DEVICES": "all",
-        "ROS_DOMAIN_ID": "27"
+        "ROS_DOMAIN_ID": "80"
         // "__NV_PRIME_RENDER_OFFLOAD": "1",
         // "__GLX_VENDOR_LIBRARY_NAME": "nvidia"
     },

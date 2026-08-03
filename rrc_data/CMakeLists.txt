@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.8)
-project(ground_truth3d)
+project(rrc_data)
 
 if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
   add_compile_options(-Wall -Wextra -Wpedantic)
@@ -27,17 +27,17 @@ install(TARGETS
   DESTINATION lib/${PROJECT_NAME}
 )
 
-add_executable(synced_saver src/save_synced_data.cpp)
-target_include_directories(synced_saver PUBLIC
+add_executable(save_synced_data src/save_synced_data.cpp)
+target_include_directories(save_synced_data PUBLIC
   ${PCL_INCLUDE_DIRS}
   ${EIGEN3_INCLUDE_DIR}
 )
 
-target_link_libraries(synced_saver 
+target_link_libraries(save_synced_data 
   ${PCL_LIBRARIES}
 )
 
-ament_target_dependencies(synced_saver 
+ament_target_dependencies(save_synced_data 
   rclcpp 
   sensor_msgs 
   geometry_msgs
@@ -50,7 +50,7 @@ ament_target_dependencies(synced_saver
 )
 
 install(TARGETS
-  synced_saver
+  save_synced_data
   DESTINATION lib/${PROJECT_NAME}
 )
 
