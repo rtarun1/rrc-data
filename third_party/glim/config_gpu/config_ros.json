@@ -55,8 +55,8 @@
     "acc_scale": 9.80665, // Auto-detect if zero
     // TF config
     "imu_frame_id": "", // Auto-detect if blank
-    "lidar_frame_id": "livox_frame", // Auto-detect if blank
-    "base_frame_id": "livox_frame", // If blank, IMU frame ID is used
+    "lidar_frame_id": "", // Auto-detect if blank
+    "base_frame_id": "", // If blank, IMU frame ID is used
     "odom_frame_id": "odom",
     "map_frame_id": "map",
     "publish_imu2lidar": true,

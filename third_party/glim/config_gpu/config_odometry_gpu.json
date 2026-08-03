@@ -51,7 +51,7 @@
     "fix_imu_bias": false,
     "compute_covs": false,
     // Voxel params
-    "voxel_resolution": 0.25,
+    "voxel_resolution": 0.1,
     "voxel_resolution_max": 0.5,
     "voxel_resolution_dmin": 5.0,
     "voxel_resolution_dmax": 20.0,
