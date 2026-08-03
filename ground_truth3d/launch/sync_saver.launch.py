@@ -2,7 +2,7 @@ import os
 
 from ament_index_python.packages import get_package_share_directory
 from launch import LaunchDescription
-from launch.actions import IncludeLaunchDescription
+from launch.actions import IncludeLaunchDescription, TimerAction
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch_ros.actions import Node
 
@@ -17,14 +17,13 @@ def generate_launch_description():
     )
 
     rosbag_play_launch = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource(
-            os.path.join(ground_truth3d_share, 'launch', 'rosbag_play.launch.py')
-        ),
-        launch_arguments={
-            # 'serial_no': "'213522251148'",
-            'bag_dir': "/home/container_user/ground_truth3d/src/records/2026-04-18_02-42-52/rosbag"
-        }.items(),
-    )
+            PythonLaunchDescriptionSource(
+                os.path.join(ground_truth3d_share, 'launch', 'rosbag_play.launch.py')
+            ),
+            launch_arguments={
+                'bag_dir': "/home/container_user/rrc_data/src/records/2026-08-03_04-15-14/rosbag"
+            }.items(),
+        )
 
     synced_saver_node = Node(
         package='ground_truth3d',
@@ -34,7 +33,13 @@ def generate_launch_description():
         output='screen'
     )
 
+    rosbag_with_delay = TimerAction(
+                period=5.0,
+                actions=[rosbag_play_launch],
+                # condition=IfCondition(record),
+            )
+
     return LaunchDescription([
         synced_saver_node,
-        rosbag_play_launch
+        rosbag_with_delay
     ])

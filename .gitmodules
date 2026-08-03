@@ -1,10 +1,3 @@
-[submodule "third_party/direct_lidar_inertial_odometry"]
-	path = third_party/direct_lidar_inertial_odometry
-	url = https://github.com/rtarun1/direct_lidar_inertial_odometry.git
-	branch = feature/ros2
 [submodule "hardware_dependencies/livox_ros_driver2"]
 	path = hardware_dependencies/livox_ros_driver2
 	url = https://github.com/rtarun1/livox_ros_driver2.git
-[submodule "hardware_dependencies/realsense-ros"]
-	path = hardware_dependencies/realsense-ros
-	url = https://github.com/realsenseai/realsense-ros.git

@@ -11,6 +11,7 @@
 #include <sensor_msgs/msg/image.hpp>
 #include <sensor_msgs/msg/camera_info.hpp>
 #include <sensor_msgs/image_encodings.hpp> 
+#include <geometry_msgs/msg/pose_stamped.hpp>
 
 #include <message_filters/subscriber.h>
 #include <message_filters/sync_policies/approximate_time.h>
@@ -23,6 +24,8 @@
 #include <cv_bridge/cv_bridge.h>
 #include <opencv2/opencv.hpp>
 #include <opencv2/calib3d.hpp>
+
+#include <Eigen/Dense>
 
 class SyncedSaver : public rclcpp::Node {
 public:
@@ -55,7 +58,7 @@ public:
         camera_sub_.subscribe(this, "/camera1/camera1/color/image_raw", qos_profile);
         camera_info_sub_.subscribe(this, "/camera1/camera1/color/camera_info", qos_profile);
         depth_sub_.subscribe(this, "/camera1/camera1/aligned_depth_to_color/image_raw", qos_profile);
-        pose_sub_.subscribe(this, "/dlio/odom_node/pose", qos_profile);
+        pose_sub_.subscribe(this, "/glim_rosnode/lidar_pose_corrected", qos_profile);
 
         if (save_pcd_) {
             pcd_dir_ = base_dir + "/pcd/";
@@ -63,12 +66,12 @@ public:
             
             pc_sub_.subscribe(this, "/livox/lidar", qos_profile);
             
-            sync5_.reset(new Sync5(SyncPolicy5(100), pc_sub_, camera_sub_, camera_info_sub_, depth_sub_, pose_sub_));
+            sync5_.reset(new Sync5(SyncPolicy5(100), pc_sub_, camera_sub_, pose_sub_, camera_info_sub_, depth_sub_));
             sync5_->setMaxIntervalDuration(rclcpp::Duration::from_seconds(0.05));
             sync5_->registerCallback(std::bind(&SyncedSaver::sync_callback5, this, 
                 std::placeholders::_1, std::placeholders::_2, std::placeholders::_3, std::placeholders::_4, std::placeholders::_5));
         } else {
-            sync4_.reset(new Sync4(SyncPolicy4(100), camera_sub_, camera_info_sub_, depth_sub_, pose_sub_));
+            sync4_.reset(new Sync4(SyncPolicy4(100), camera_sub_, pose_sub_, camera_info_sub_, depth_sub_));
             sync4_->setMaxIntervalDuration(rclcpp::Duration::from_seconds(0.05));
             sync4_->registerCallback(std::bind(&SyncedSaver::sync_callback4, this, 
                 std::placeholders::_1, std::placeholders::_2, std::placeholders::_3, std::placeholders::_4));
@@ -100,11 +103,10 @@ private:
 
             RCLCPP_INFO_ONCE(this->get_logger(), "First synchronized message set (5 Topics) received! Saving...");
 
-            double timestamp = cloud_msg->header.stamp.sec + (cloud_msg->header.stamp.nanosec * 1e-9);
-            std::string time_str = get_time_string(timestamp);
+            std::string time_str = get_time_string(cloud_msg->header.stamp.sec, cloud_msg->header.stamp.nanosec);
 
             save_pcd(cloud_msg, pcd_dir_ + time_str + ".pcd");
-            process_common_data(image_msg, info_msg, depth_msg, pose_msg, time_str);
+            process_common_data(image_msg, pose_msg, info_msg, depth_msg, time_str);
         }
 
     void sync_callback4(
@@ -115,11 +117,11 @@ private:
 
             RCLCPP_INFO_ONCE(this->get_logger(), "First synchronized message set (4 Topics) received! Saving...");
 
-            double timestamp = image_msg->header.stamp.sec + (image_msg->header.stamp.nanosec * 1e-9);
-            std::string time_str = get_time_string(timestamp);
+            std::string time_str = get_time_string(image_msg->header.stamp.sec, image_msg->header.stamp.nanosec);
 
-            process_common_data(image_msg, info_msg, depth_msg, pose_msg, time_str);
+            process_common_data(image_msg, pose_msg, info_msg, depth_msg, time_str);
         }
+
     void process_common_data(
         const sensor_msgs::msg::Image::ConstSharedPtr& image_msg,
         const geometry_msgs::msg::PoseStamped::ConstSharedPtr& pose_msg,
@@ -134,9 +136,9 @@ private:
             save_depth(depth_msg, depth_dir_ + time_str + ".png"); 
     }
 
-    std::string get_time_string(double timestamp) {
+    std::string get_time_string(int32_t sec, uint32_t nanosec) {
         std::ostringstream time_oss;
-        time_oss << std::fixed << std::setprecision(9) << timestamp;
+        time_oss << sec << "." << std::setw(9) << std::setfill('0') << nanosec;
         return time_oss.str();
     }
 
@@ -205,10 +207,6 @@ private:
             msg->pose.position.z
         );
 
-        // Eigen::Matrix4d T_x180 = Eigen::Matrix4d::Identity();
-        // T_x180(1, 1) = -1.0;
-        // T_x180(2, 2) = -1.0;
-
         Eigen::Quaterniond q_ext(
             -0.497015705287846,    // qw
             0.49199556220557866,   // qx
@@ -218,13 +216,11 @@ private:
         Eigen::Matrix4d T_ext = Eigen::Matrix4d::Identity();
         T_ext.block<3,3>(0,0) = q_ext.toRotationMatrix();
         T_ext.block<3,1>(0,3) = Eigen::Vector3d(
-            0.0594751875604552,  // tx
+            0.0594751875604552,    // tx
             -0.015623875200303818, // ty
-            -0.04515392036142616  // tz
+            -0.04515392036142616   // tz
         );
 
-        // Eigen::Matrix4d T_rotated = T_x180 * T_orig;
-        
         Eigen::Matrix4d T_final = T_orig * T_ext; 
 
         file << std::scientific << std::setprecision(18);
