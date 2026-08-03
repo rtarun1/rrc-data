@@ -1,6 +1,6 @@
 {
     "name": "RRC Data collection Development on AMD64/x86 with GPU",
-    "image": "ghcr.io/rtarun1/ground_truth3d_base:v0.1",
+    "image": "ghcr.io/rtarun1/rrc_data_gpu:v0.5",
     "privileged": true,
     "workspaceMount": "source=${localWorkspaceFolder},target=/home/container_user/rrc_data/src,type=bind",
     "workspaceFolder": "/home/container_user/rrc_data/src",

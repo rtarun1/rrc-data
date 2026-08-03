@@ -46,7 +46,7 @@ def launch_playback(context, *args, **kwargs):
         arguments=[
             '-d',
             os.path.join(
-                get_package_share_directory('ground_truth3d'),
+                get_package_share_directory('rrc_data'),
                 'rviz',
                 'data_collection.rviz'
             )

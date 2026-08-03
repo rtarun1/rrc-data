@@ -11,10 +11,10 @@ from launch.substitutions import LaunchConfiguration
 
 def generate_launch_description():
 
-    ground_truth3d_share = get_package_share_directory('ground_truth3d')
+    rrc_data_share = get_package_share_directory('rrc_data')
 
     config = os.path.join(
-        ground_truth3d_share,
+        rrc_data_share,
         'config',
         'sync_saver.yaml'
     )
@@ -28,7 +28,7 @@ def generate_launch_description():
     rosbag_play_launch = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
             os.path.join(
-                ground_truth3d_share,
+                rrc_data_share,
                 'launch',
                 'rosbag_play.launch.py'
             )
@@ -40,7 +40,7 @@ def generate_launch_description():
     )
 
     synced_saver_node = Node(
-            package='ground_truth3d',
+            package='rrc_data',
             executable='synced_saver',  
             name='synced_saver',
             parameters=[config],

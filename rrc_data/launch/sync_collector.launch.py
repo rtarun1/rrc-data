@@ -59,7 +59,7 @@ def generate_launch_description():
     log_full_path = os.path.join('/home/container_user/rrc_data/src/records/', get_current_timestamp)
     rosbag_full_path = os.path.join(log_full_path, 'rosbag')
 
-    package_path = get_package_share_directory('ground_truth3d')
+    package_path = get_package_share_directory('rrc_data')
 
 
     camera1_launch = IncludeLaunchDescription(
@@ -106,7 +106,7 @@ def generate_launch_description():
         executable='rviz2',
         name='rviz2',
         output='log',
-        arguments=['-d', get_package_share_directory('ground_truth3d') + '/rviz/data_collection.rviz'],
+        arguments=['-d', get_package_share_directory('rrc_data') + '/rviz/data_collection.rviz'],
     )
 
     dlio_launch = IncludeLaunchDescription(

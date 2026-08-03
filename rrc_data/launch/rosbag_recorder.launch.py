@@ -9,7 +9,7 @@ from yaml import safe_load
 
 def generate_launch_description():
     # Get path to package
-    robot_bringup_dir = get_package_share_directory('ground_truth3d')
+    robot_bringup_dir = get_package_share_directory('rrc_data')
     
     # Get path to config file
     config_dir = os.path.join(robot_bringup_dir, 'config')

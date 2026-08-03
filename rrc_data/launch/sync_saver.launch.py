@@ -8,17 +8,17 @@ from launch_ros.actions import Node
 
 def generate_launch_description():
     
-    ground_truth3d_share = get_package_share_directory('ground_truth3d')
+    rrc_data_share = get_package_share_directory('rrc_data')
 
     config = os.path.join(
-        get_package_share_directory('ground_truth3d'),
+        get_package_share_directory('rrc_data'),
         'config',
         'sync_saver.yaml'
     )
 
     rosbag_play_launch = IncludeLaunchDescription(
             PythonLaunchDescriptionSource(
-                os.path.join(ground_truth3d_share, 'launch', 'rosbag_play.launch.py')
+                os.path.join(rrc_data_share, 'launch', 'rosbag_play.launch.py')
             ),
             launch_arguments={
                 'bag_dir': "/home/container_user/rrc_data/src/records/2026-08-03_04-15-14/rosbag"
@@ -26,7 +26,7 @@ def generate_launch_description():
         )
 
     synced_saver_node = Node(
-        package='ground_truth3d',
+        package='rrc_data',
         executable='synced_saver',
         name='synced_saver',
         parameters=[config],
