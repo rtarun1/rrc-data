@@ -27,9 +27,9 @@
 
 #include <Eigen/Dense>
 
-class SyncedSaver : public rclcpp::Node {
+class SyncedData : public rclcpp::Node {
 public:
-    SyncedSaver() : Node("synced_saver"){
+    SyncedData() : Node("save_synced_data"){
 
         this->declare_parameter<std::string>("base_output_dir", "src/data/default_output");
         this->declare_parameter<bool>("save_pcd", true);
@@ -68,12 +68,12 @@ public:
             
             sync5_.reset(new Sync5(SyncPolicy5(100), pc_sub_, camera_sub_, pose_sub_, camera_info_sub_, depth_sub_));
             sync5_->setMaxIntervalDuration(rclcpp::Duration::from_seconds(0.05));
-            sync5_->registerCallback(std::bind(&SyncedSaver::sync_callback5, this, 
+            sync5_->registerCallback(std::bind(&SyncedData::sync_callback5, this, 
                 std::placeholders::_1, std::placeholders::_2, std::placeholders::_3, std::placeholders::_4, std::placeholders::_5));
         } else {
             sync4_.reset(new Sync4(SyncPolicy4(100), camera_sub_, pose_sub_, camera_info_sub_, depth_sub_));
             sync4_->setMaxIntervalDuration(rclcpp::Duration::from_seconds(0.05));
-            sync4_->registerCallback(std::bind(&SyncedSaver::sync_callback4, this, 
+            sync4_->registerCallback(std::bind(&SyncedData::sync_callback4, this, 
                 std::placeholders::_1, std::placeholders::_2, std::placeholders::_3, std::placeholders::_4));
         }
     }
@@ -273,7 +273,7 @@ private:
 int main(int argc, char * argv[])
 {
     rclcpp::init(argc, argv);
-    auto node = std::make_shared<SyncedSaver>();
+    auto node = std::make_shared<SyncedData>();
     rclcpp::spin(node);
     rclcpp::shutdown();
     return 0;

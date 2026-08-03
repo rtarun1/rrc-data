@@ -25,10 +25,10 @@ def generate_launch_description():
             }.items(),
         )
 
-    synced_saver_node = Node(
+    save_synced_data_node = Node(
         package='rrc_data',
-        executable='synced_saver',
-        name='synced_saver',
+        executable='save_synced_data',
+        name='save_synced_data',
         parameters=[config],
         output='screen'
     )
@@ -40,6 +40,6 @@ def generate_launch_description():
             )
 
     return LaunchDescription([
-        synced_saver_node,
+        save_synced_data_node,
         rosbag_with_delay
     ])

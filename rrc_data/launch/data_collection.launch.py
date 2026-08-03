@@ -26,7 +26,6 @@ from launch_xml.launch_description_sources import XMLLaunchDescriptionSource
 
 
 def generate_launch_description():
-    dlio_share = get_package_share_directory('direct_lidar_inertial_odometry')
     launch_arguments = []
     launch_arguments.append(
         DeclareLaunchArgument(
@@ -61,7 +60,6 @@ def generate_launch_description():
 
     package_path = get_package_share_directory('rrc_data')
 
-
     camera1_launch = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
             PathJoinSubstitution(
@@ -69,7 +67,6 @@ def generate_launch_description():
             ),
         ),
         launch_arguments={
-            # 'serial_no': "'213522251148'",
             'camera_name': "camera1",
             'camera_namespace': "camera1",
             'align_depth.enable': 'true',
@@ -90,6 +87,18 @@ def generate_launch_description():
         ),
     )
 
+    glim_node = Node(
+            package='glim_ros',
+            executable='glim_rosnode',
+            name='glim_rosnode',
+            parameters=[
+            {
+                'config_path': '/home/container_user/rrc_data/src/third_party/glim/config_cpu'
+            }
+        ],
+            output='screen'
+        )
+
     rosbag_recorder_launch = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
             [package_path, '/launch/rosbag_recorder.launch.py']
@@ -109,13 +118,6 @@ def generate_launch_description():
         arguments=['-d', get_package_share_directory('rrc_data') + '/rviz/data_collection.rviz'],
     )
 
-    dlio_launch = IncludeLaunchDescription(
-            PythonLaunchDescriptionSource(
-                os.path.join(dlio_share, 'launch', 'dlio.launch.py')
-            ),
-            launch_arguments={'rviz': 'true'}.items()
-        )
-
     rosbag_with_delay = TimerAction(
         period=5.0,
         actions=[rosbag_recorder_launch],
@@ -126,7 +128,7 @@ def generate_launch_description():
         camera1_launch,
         livox_launch,
         rviz_node,
-        # dlio_launch,
+        # glim_node,
         rosbag_with_delay,
     ]
 

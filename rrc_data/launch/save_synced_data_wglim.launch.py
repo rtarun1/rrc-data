@@ -39,10 +39,10 @@ def generate_launch_description():
         }.items(),
     )
 
-    synced_saver_node = Node(
+    save_synced_data_node = Node(
             package='rrc_data',
-            executable='synced_saver',  
-            name='synced_saver',
+            executable='save_synced_data',  
+            name='save_synced_data',
             parameters=[config],
             output='screen'
         )
@@ -53,7 +53,7 @@ def generate_launch_description():
         name='glim_rosnode',
         parameters=[
         {
-            'config_path': '/home/container_user/rrc_data/src/third_party/glim/config_cpu'
+            'config_path': '/home/container_user/rrc_data/src/third_party/glim/config_gpu'
         }
     ],
         output='screen'
@@ -67,6 +67,6 @@ def generate_launch_description():
     return LaunchDescription([
         rviz_arg,
         glim_node,
-        synced_saver_node,
+        save_synced_data_node,
         rosbag_with_delay
     ])
