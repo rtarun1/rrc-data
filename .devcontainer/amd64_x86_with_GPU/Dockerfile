@@ -1,7 +1,7 @@
-FROM nvidia/cuda:12.2.2-devel-ubuntu22.04
+FROM nvidia/cuda:12.6.2-devel-ubuntu24.04
 
 # basic args
-ARG ROS_DISTRO=humble
+ARG ROS_DISTRO=jazzy
 ARG USERNAME=container_user
 ARG USER_UID=1000
 ARG USER_GID=$USER_UID
@@ -38,8 +38,8 @@ RUN apt-get update || true && apt-get install -y --no-install-recommends apt-uti
   rm -rf /var/lib/apt/lists/*
 
 # Setup ROS Apt sources
-RUN curl -L -s -o /tmp/ros2-apt-source.deb https://github.com/ros-infrastructure/ros-apt-source/releases/download/1.1.0/ros2-apt-source_1.1.0.jammy_all.deb \
-    && echo "1600cb8cc28258a39bffc1736a75bcbf52d1f2db371a4d020c1b187d2a5a083b /tmp/ros2-apt-source.deb" | sha256sum --strict --check \
+RUN curl -L -s -f -o /tmp/ros2-apt-source.deb https://github.com/ros-infrastructure/ros-apt-source/releases/download/1.2.0/ros2-apt-source_1.2.0.noble_all.deb \
+    && echo "0804d9b13db770eb87019be414cd78378835228ad5fa801fc88758596dd8f7e5 */tmp/ros2-apt-source.deb" | sha256sum --strict --check \
     && apt-get update \
     && apt-get install /tmp/ros2-apt-source.deb \
     && rm -f /tmp/ros2-apt-source.deb \
@@ -136,7 +136,7 @@ RUN sudo apt-get update && sudo apt-get install -y --no-install-recommends \
     vim \
     nano \
     tree \
-    python3.10-venv \
+    python3.12-venv \
     wget \
     ffmpeg=7:* \
     libsm6=2:* \
@@ -149,25 +149,9 @@ RUN sudo apt-get update && sudo apt-get install -y --no-install-recommends \
     && sudo apt-get clean -y \
     && sudo rm -rf /var/lib/apt/lists/*
 
-# Setup NVIDIA Container Toolkit for GPU access
-# RUN VULKAN_API_VERSION=$(dpkg -s libvulkan1 | grep -oP 'Version: [0-9|\.]+' | grep -oP '[0-9]+(\.[0-9]+)(\.[0-9]+)') && \
-#     sudo mkdir -pm755 /etc/vulkan/icd.d/ && \
-#     echo "{\
-#     \"file_format_version\" : \"1.0.0\",\
-#     \"ICD\": {\
-#         \"library_path\": \"libGLX_nvidia.so.0\",\
-#         \"api_version\" : \"${VULKAN_API_VERSION}\"\
-#     }}" | sudo tee /etc/vulkan/icd.d/nvidia_icd.json > /dev/null && \
-#     sudo mkdir -pm755 /usr/share/glvnd/egl_vendor.d/ && \
-#     echo "{\
-#     \"file_format_version\" : \"1.0.0\",\
-#     \"ICD\": {\
-#         \"library_path\": \"libEGL_nvidia.so.0\"\
-#     }}" | sudo tee /usr/share/glvnd/egl_vendor.d/10_nvidia.json > /dev/null
-
 # Build and install Realsense-SDK
 WORKDIR /home/$USERNAME
-RUN git clone --depth=1 --progress https://github.com/IntelRealSense/librealsense.git --branch v2.56.2
+RUN git clone --depth=1 --progress https://github.com/IntelRealSense/librealsense.git
 WORKDIR /home/$USERNAME/librealsense
 RUN sudo mkdir -p /etc/udev/rules.d && \
     ./scripts/setup_udev_rules.sh \
@@ -191,10 +175,10 @@ RUN cd small_gicp \
     && cmake .. -DCMAKE_BUILD_TYPE=Release && make -j \
     && sudo make install
 
-RUN curl -s --compressed "https://koide3.github.io/ppa/ubuntu2204/KEY.gpg" | gpg --dearmor | sudo tee /etc/apt/trusted.gpg.d/koide3_ppa.gpg >/dev/null  \
-    && echo "deb [signed-by=/etc/apt/trusted.gpg.d/koide3_ppa.gpg] https://koide3.github.io/ppa/ubuntu2204 ./" | sudo tee /etc/apt/sources.list.d/koide3_ppa.list \
-    && sudo apt update && sudo apt install -y libiridescence-dev libboost-all-dev libglfw3-dev libmetis-dev libgtsam-points-cuda12.2-dev \
-    && sudo apt install -y ros-humble-glim-ros-cuda12.2
+RUN curl -s --compressed "https://koide3.github.io/ppa/ubuntu2404/KEY.gpg" | gpg --dearmor | sudo tee /etc/apt/trusted.gpg.d/koide3_ppa.gpg >/dev/null  \
+    && echo "deb [signed-by=/etc/apt/trusted.gpg.d/koide3_ppa.gpg] https://koide3.github.io/ppa/ubuntu2404 ./" | sudo tee /etc/apt/sources.list.d/koide3_ppa.list \
+    && sudo apt update && sudo apt install -y libiridescence-dev libboost-all-dev libglfw3-dev libmetis-dev libgtsam-points-cuda12.6-dev \
+    && sudo apt install -y ros-jazzy-glim-ros-cuda12.6
 
 COPY rosPkgs.list /tmp/rosPkgs.list
 RUN sudo apt-get update \
