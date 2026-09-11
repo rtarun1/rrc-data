@@ -178,7 +178,7 @@ RUN mkdir build && cd build \
 
 # Build and install Livox-SDK2
 WORKDIR /home/$USERNAME
-RUN git clone --depth=1 --progress https://github.com/Smart-Wheelchair-RRC/Livox-SDK2.git 
+RUN git clone --depth=1 --progress https://github.com/Livox-SDK/Livox-SDK2 
 RUN cd Livox-SDK2 \
     && mkdir build \
     && cd build \

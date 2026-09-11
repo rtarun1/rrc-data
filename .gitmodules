@@ -1,4 +1,0 @@
-[submodule "hardware_dependencies/livox_ros_driver2"]
-	path = hardware_dependencies/livox_ros_driver2
-	url = https://github.com/rtarun1/livox_ros_driver2.git
-	branch = master

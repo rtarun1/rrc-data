@@ -45,6 +45,7 @@ public:
         discoeff_dir_ = base_dir + "/discoeff/";
         depth_dir_ = base_dir + "/depth/"; 
         pose_dir_ = base_dir + "/pose/";
+        pose_ros_dir_ = base_dir + "/pose_lidar/";
 
         std::filesystem::create_directories(img_dir_);
         std::filesystem::create_directories(undistort_img_dir_);
@@ -52,6 +53,7 @@ public:
         std::filesystem::create_directories(discoeff_dir_);
         std::filesystem::create_directories(depth_dir_);
         std::filesystem::create_directories(pose_dir_);
+        std::filesystem::create_directories(pose_ros_dir_);
 
         rmw_qos_profile_t qos_profile = rmw_qos_profile_sensor_data;
 
@@ -131,6 +133,7 @@ private:
 
             save_images(image_msg, info_msg, img_dir_ + time_str + ".png", undistort_img_dir_ + time_str + ".png");
             save_pose(pose_msg, pose_dir_ + time_str + ".txt");
+            save_pose_translation(pose_msg, pose_ros_dir_ + time_str + ".txt");
             save_intrinsics(info_msg, calib_dir_ + time_str + ".txt");
             save_distortion_coeff(info_msg, discoeff_dir_ + time_str + ".txt");
             save_depth(depth_msg, depth_dir_ + time_str + ".png"); 
@@ -185,14 +188,7 @@ private:
         }
     }
     
-    void save_pose(const geometry_msgs::msg::PoseStamped::ConstSharedPtr& msg, const std::string& filename) {
-        std::ofstream file(filename);
-
-        if (!file.is_open()) {
-            RCLCPP_ERROR(this->get_logger(), "Failed to open pose file: %s", filename.c_str());
-            return;
-        }
-
+    Eigen::Matrix4d get_final_transform(const geometry_msgs::msg::PoseStamped::ConstSharedPtr& msg) {
         Eigen::Quaterniond q_orig(
             msg->pose.orientation.w,
             msg->pose.orientation.x,
@@ -221,13 +217,40 @@ private:
             -0.04515392036142616   // tz
         );
 
-        Eigen::Matrix4d T_final = T_orig * T_ext; 
+        return T_orig * T_ext;
+    }
+
+    void save_pose(const geometry_msgs::msg::PoseStamped::ConstSharedPtr& msg, const std::string& filename) {
+        std::ofstream file(filename);
+
+        if (!file.is_open()) {
+            RCLCPP_ERROR(this->get_logger(), "Failed to open pose file: %s", filename.c_str());
+            return;
+        }
+
+        Eigen::Matrix4d T_final = get_final_transform(msg);
 
         file << std::scientific << std::setprecision(18);
 
         for (int i = 0; i < 4; ++i) {
             file << T_final(i, 0) << " " << T_final(i, 1) << " " << T_final(i, 2) << " " << T_final(i, 3) << "\n";
         }
+        
+        file.close();
+    }
+
+    void save_pose_translation(const geometry_msgs::msg::PoseStamped::ConstSharedPtr& msg, const std::string& filename) {
+        std::ofstream file(filename);
+
+        if (!file.is_open()) {
+            RCLCPP_ERROR(this->get_logger(), "Failed to open pose translation file: %s", filename.c_str());
+            return;
+        }
+
+        Eigen::Matrix4d T_final = get_final_transform(msg);
+
+        file << std::scientific << std::setprecision(18);
+        file << T_final(0, 3) << " " << T_final(1, 3) << " " << T_final(2, 3) << "\n";
         
         file.close();
     }
@@ -258,7 +281,7 @@ private:
     }
 
     bool save_pcd_;
-    std::string pcd_dir_, img_dir_, undistort_img_dir_, calib_dir_, depth_dir_, discoeff_dir_, pose_dir_;
+    std::string pcd_dir_, img_dir_, undistort_img_dir_, calib_dir_, depth_dir_, discoeff_dir_, pose_dir_, pose_ros_dir_;
 
     message_filters::Subscriber<sensor_msgs::msg::PointCloud2> pc_sub_;
     message_filters::Subscriber<sensor_msgs::msg::Image> camera_sub_;

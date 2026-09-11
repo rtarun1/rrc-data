@@ -9,6 +9,7 @@ ros-humble-hardware-interface
 ros-humble-pcl-ros
 ros-humble-twist-stamper
 ros-humble-realsense2-camera
+ros-humble-realsense2-description
 ros-humble-velodyne-description
 ros-humble-lms1xx
 ros-humble-interactive-marker-twist-server
